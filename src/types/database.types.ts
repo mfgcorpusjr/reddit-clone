@@ -63,7 +63,7 @@ export type Database = {
           },
         ]
       }
-      groups: {
+      communities: {
         Row: {
           avatar: string
           created_at: string
@@ -89,27 +89,27 @@ export type Database = {
       }
       posts: {
         Row: {
+          community_id: number
           created_at: string
           description: string | null
-          group_id: number
           id: number
           image: string | null
           title: string
           user_id: string
         }
         Insert: {
+          community_id: number
           created_at?: string
           description?: string | null
-          group_id: number
           id?: number
           image?: string | null
           title: string
           user_id: string
         }
         Update: {
+          community_id?: number
           created_at?: string
           description?: string | null
-          group_id?: number
           id?: number
           image?: string | null
           title?: string
@@ -117,10 +117,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "posts_group_id_fkey"
-            columns: ["group_id"]
+            foreignKeyName: "posts_community_id_fkey"
+            columns: ["community_id"]
             isOneToOne: false
-            referencedRelation: "groups"
+            referencedRelation: "communities"
             referencedColumns: ["id"]
           },
           {
