@@ -1,52 +1,100 @@
 import { View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 import Text from "@/components/ui/Text";
 import TextInput from "@/components/ui/TextInput";
 import Button from "@/components/ui/Button";
 import KeyboardAvoidingScrollView from "@/components/helpers/KeyboardAvoidingScrollView";
 
+const schema = z.object({
+  email: z.email("Invalid email").trim(),
+  password: z.string("Password is required").trim(),
+});
+
+export type Form = z.infer<typeof schema>;
+
 export default function SignInScreen() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
+  const handleSignIn = (data: Form) => {
+    console.log(data);
+  };
+
   return (
     <SafeAreaView className="flex-1 p-4">
       <KeyboardAvoidingScrollView>
-        <View className="flex-1 justify-center gap-10">
+        <View className="flex-1 justify-center">
           <View className="items-center">
             <Image
               className="w-20 h-20"
               source={require("@assets/images/logo.png")}
             />
-            <Text className="font-inter-bold text-2xl mt-4">
-              Hey, Welcome Back
-            </Text>
+            <Text className="font-inter-bold text-2xl mt-4">Welcome Back</Text>
             <Text className="text-gray-400">
               Please enter your details to sign in
             </Text>
           </View>
 
-          <View className="gap-6">
+          <View className="gap-2 mt-12">
             <View className="gap-1">
               <Text className="text-gray-500">Email</Text>
-              <TextInput
-                placeholder="Enter your email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-              />
+              <View>
+                <Controller
+                  control={control}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      value={value}
+                      placeholder="Enter your email"
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                    />
+                  )}
+                  name="email"
+                />
+                <Text className="text-base text-red-500">
+                  {errors.email?.message}
+                </Text>
+              </View>
             </View>
 
             <View className="gap-1">
               <Text className="text-gray-500">Password</Text>
-              <TextInput
-                placeholder="Enter your password"
-                autoCapitalize="none"
-                secureTextEntry
-              />
+              <View>
+                <Controller
+                  control={control}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      onChangeText={onChange}
+                      onBlur={onBlur}
+                      value={value}
+                      placeholder="Enter your password"
+                      autoCapitalize="none"
+                      secureTextEntry
+                    />
+                  )}
+                  name="password"
+                />
+                <Text className="text-base text-red-500">
+                  {errors.password?.message}
+                </Text>
+              </View>
             </View>
           </View>
 
-          <View className="gap-4">
-            <Button text="Sign In" />
+          <View className="gap-4 mt-6">
+            <Button text="Sign In" onPress={handleSubmit(handleSignIn)} />
 
             <Text className="text-center text-gray-400">
               Don't have an account?{" "}
