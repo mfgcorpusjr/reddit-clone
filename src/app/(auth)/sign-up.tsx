@@ -4,11 +4,14 @@ import { Link } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useMutation } from "@tanstack/react-query";
 
 import Text from "@/components/ui/Text";
 import TextInput from "@/components/ui/TextInput";
 import Button from "@/components/ui/Button";
 import KeyboardAvoidingScrollView from "@/components/helpers/KeyboardAvoidingScrollView";
+
+import * as AuthAPI from "@/api/auth";
 
 const schema = z.object({
   username: z.string("Username is required").trim(),
@@ -30,9 +33,12 @@ export default function SignUpScreen() {
     resolver: zodResolver(schema),
   });
 
-  const handleSignUp = (data: Form) => {
-    console.log(data);
-  };
+  const { mutate, isPending } = useMutation({
+    mutationFn: AuthAPI.signUp,
+    onError: (error) => console.log(error.message),
+  });
+
+  const handleSignUp = (data: Form) => mutate(data);
 
   return (
     <SafeAreaView className="flex-1 p-4">
@@ -122,7 +128,11 @@ export default function SignUpScreen() {
           </View>
 
           <View className="gap-4 mt-6">
-            <Button text="Sign Up" onPress={handleSubmit(handleSignUp)} />
+            <Button
+              text="Sign Up"
+              loading={isPending}
+              onPress={handleSubmit(handleSignUp)}
+            />
 
             <Text className="text-center text-gray-400">
               Already have an account?{" "}

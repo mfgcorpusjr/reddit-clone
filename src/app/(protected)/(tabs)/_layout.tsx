@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import SignOutButton from "@/components/common/SignOutButton";
 import theme from "@/theme";
 
 export default function TabsLayout() {
@@ -20,6 +21,7 @@ export default function TabsLayout() {
             fontFamily: "Inter-SemiBold",
             color: theme.colors.primary,
           },
+          headerRight: () => <SignOutButton />,
           title: "Home",
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="home-outline" size={size} color={color} />
