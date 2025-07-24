@@ -5,12 +5,19 @@ import theme from "@/theme";
 
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "black" }}>
+    <Tabs
+      screenOptions={{
+        headerTitleStyle: { fontFamily: "Inter-SemiBold" },
+        tabBarActiveTintColor: "black",
+        tabBarLabelStyle: { fontFamily: "Inter-Regular" },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           headerTitle: "Reddit",
           headerTitleStyle: {
+            fontFamily: "Inter-SemiBold",
             color: theme.colors.primary,
           },
           title: "Home",
