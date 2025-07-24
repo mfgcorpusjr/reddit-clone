@@ -5,6 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
+import Snackbar from "react-native-snackbar";
 
 import Text from "@/components/ui/Text";
 import TextInput from "@/components/ui/TextInput";
@@ -29,13 +30,21 @@ export default function SignUpScreen() {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
     resolver: zodResolver(schema),
   });
 
   const { mutate, isPending } = useMutation({
     mutationFn: AuthAPI.signUp,
-    onError: (error) => console.log(error.message),
+    onError: (error) => {
+      reset();
+
+      Snackbar.show({
+        text: error.message,
+        duration: Snackbar.LENGTH_SHORT,
+      });
+    },
   });
 
   const handleSignUp = (data: Form) => mutate(data);
@@ -127,7 +136,7 @@ export default function SignUpScreen() {
             </View>
           </View>
 
-          <View className="gap-4 mt-6">
+          <View className="gap-4 mt-4">
             <Button
               text="Sign Up"
               loading={isPending}
