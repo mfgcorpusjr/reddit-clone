@@ -14,21 +14,188 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          comment: string
+          created_at: string
+          id: number
+          parent_id: number | null
+          post_id: number
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: number
+          parent_id?: number | null
+          post_id: number
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: number
+          parent_id?: number | null
+          post_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      groups: {
+        Row: {
+          avatar: string
+          created_at: string
+          id: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          avatar: string
+          created_at?: string
+          id?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          avatar?: string
+          created_at?: string
+          id?: number
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      posts: {
+        Row: {
+          created_at: string
+          description: string | null
+          group_id: number
+          id: number
+          image: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          group_id: number
+          id?: number
+          image?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          group_id?: number
+          id?: number
+          image?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      upvotes: {
+        Row: {
+          comment_id: number | null
+          created_at: string
+          id: number
+          post_id: number | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          comment_id?: number | null
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          comment_id?: number | null
+          created_at?: string
+          id?: number
+          post_id?: number | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "upvotes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "upvotes_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "upvotes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
-          avatar: string | null
+          avatar: string
           created_at: string
           id: string
           username: string
         }
         Insert: {
-          avatar?: string | null
+          avatar?: string
           created_at?: string
           id: string
           username: string
         }
         Update: {
-          avatar?: string | null
+          avatar?: string
           created_at?: string
           id?: string
           username?: string
