@@ -1,5 +1,7 @@
 import { Stack, Redirect } from "expo-router";
 
+import CloseButton from "@/components/common/CloseButton";
+
 import useAuthStore from "@/store/useAuthStore";
 
 export default function ProtectedLayout() {
@@ -14,7 +16,19 @@ export default function ProtectedLayout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
         name="posts/create"
-        options={{ headerShown: false, presentation: "modal" }}
+        options={{
+          title: "",
+          headerTransparent: true,
+          headerLeft: () => <CloseButton />,
+        }}
+      />
+      <Stack.Screen
+        name="communities"
+        options={{
+          title: "Post to",
+          headerTransparent: true,
+          headerLeft: () => <CloseButton />,
+        }}
       />
     </Stack>
   );

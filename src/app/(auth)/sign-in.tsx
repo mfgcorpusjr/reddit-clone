@@ -60,7 +60,7 @@ export default function SignInScreen() {
             </Text>
           </View>
 
-          <View className="gap-2 mt-12">
+          <View className="gap-1 mt-12">
             <View className="gap-1">
               <Text className="text-gray-500">Email</Text>
               <View>
