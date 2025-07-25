@@ -1,5 +1,6 @@
 import { Tabs } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { router } from "expo-router";
 
 import SignOutButton from "@/components/common/SignOutButton";
 import theme from "@/theme";
@@ -38,12 +39,18 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="create"
+        name="blank"
         options={{
           title: "Create",
           tabBarIcon: ({ size, color }) => (
             <Ionicons name="add-outline" size={size} color={color} />
           ),
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/posts/create");
+          },
         }}
       />
       <Tabs.Screen

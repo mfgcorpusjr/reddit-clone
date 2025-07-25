@@ -9,5 +9,13 @@ export default function ProtectedLayout() {
     return <Redirect href="/sign-in" />;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="posts/create"
+        options={{ headerShown: false, presentation: "modal" }}
+      />
+    </Stack>
+  );
 }
