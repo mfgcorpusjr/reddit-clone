@@ -1,51 +1,24 @@
 import { View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
-import Snackbar from "react-native-snackbar";
 
 import Text from "@/components/ui/Text";
 import TextInput from "@/components/ui/TextInput";
 import Button from "@/components/ui/Button";
 import KeyboardAvoidingScrollView from "@/components/helpers/KeyboardAvoidingScrollView";
 
-import * as AuthAPI from "@/api/auth";
-
-const schema = z.object({
-  username: z.string("Username is required").trim(),
-  email: z.email("Invalid email").trim(),
-  password: z
-    .string("Password is required")
-    .min(6, "Password must be at least 6 characters long")
-    .trim(),
-});
-
-export type Form = z.infer<typeof schema>;
+import useSignUp, { Form } from "@/hooks/useSignUp";
 
 export default function SignUpScreen() {
   const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: zodResolver(schema),
-  });
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: AuthAPI.signUp,
-    onError: (error) => {
-      reset();
-
-      Snackbar.show({
-        text: error.message,
-        duration: Snackbar.LENGTH_SHORT,
-      });
+    Controller,
+    form: {
+      control,
+      handleSubmit,
+      formState: { errors },
     },
-  });
+    query: { mutate, isPending },
+  } = useSignUp();
 
   const handleSignUp = (data: Form) => mutate(data);
 

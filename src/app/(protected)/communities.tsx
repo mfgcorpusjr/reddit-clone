@@ -1,27 +1,22 @@
-import { useState } from "react";
 import { FlatList, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useQuery } from "@tanstack/react-query";
-import { useDebounce } from "use-debounce";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 import TextInput from "@/components/ui/TextInput";
 import CommunityListItem from "@/components/CommunityListItem";
 import ListEmpty from "@/components/common/ListEmpty";
 
-import * as CommunitiesAPI from "@/api/communities";
+import useCommunityList from "@/hooks/useCommunityList";
 
 export default function CommunitiesScreen() {
-  const [search, setSearch] = useState("");
-  const [debounceSearch] = useDebounce(search, 1000);
+  const {
+    search,
+    setSearch,
+    query: { data, isLoading },
+  } = useCommunityList();
 
   const headerHeight = useHeaderHeight();
-
-  const { data, isLoading } = useQuery({
-    queryKey: ["communities", { search: debounceSearch }],
-    queryFn: () => CommunitiesAPI.getAllCommunities(debounceSearch),
-  });
 
   return (
     <SafeAreaView
