@@ -15,6 +15,7 @@ import Text from "@/components/ui/Text";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/TextInput";
 import CloseButton from "@/components/common/CloseButton";
+import ImagePreview from "@/components/common/ImagePreview";
 
 import useCreatePost, { Form } from "@/hooks/useCreatePost";
 
@@ -25,11 +26,13 @@ export default function CreateScreen() {
       control,
       handleSubmit,
       formState: { isValid },
-      reset,
     },
     query: { mutate, isPending },
     community,
-    setCommunity,
+    media,
+    setMedia,
+    pickMedia,
+    resetForm,
   } = useCreatePost();
 
   const headerHeight = useHeaderHeight();
@@ -37,9 +40,7 @@ export default function CreateScreen() {
   const handleCreatePost = (data: Form) => mutate(data);
 
   const handleClose = () => {
-    setCommunity(null);
-    reset();
-
+    resetForm();
     router.back();
   };
 
@@ -113,6 +114,13 @@ export default function CreateScreen() {
               name="title"
             />
 
+            {media && (
+              <ImagePreview
+                source={{ uri: media.uri }}
+                onDelete={() => setMedia(undefined)}
+              />
+            )}
+
             <Controller
               control={control}
               render={({ field: { onChange, onBlur, value } }) => (
@@ -132,7 +140,12 @@ export default function CreateScreen() {
 
           <View className="flex-row items-center gap-4 py-2">
             <Ionicons name="link-outline" size={24} color="black" />
-            <Ionicons name="image-outline" size={24} color="black" />
+            <Ionicons
+              name="image-outline"
+              size={24}
+              color="black"
+              onPress={() => pickMedia()}
+            />
             <Ionicons name="videocam-outline" size={24} color="black" />
             <Ionicons name="list-outline" size={24} color="black" />
           </View>

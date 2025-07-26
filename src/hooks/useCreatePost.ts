@@ -9,10 +9,11 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import useAuthStore from "@/store/useAuthStore";
 import useCommunityStore from "@/store/useCommunityStore";
+import useMediaPicker from "@/hooks/useMediaPicker";
 import * as PostAPI from "@/api/post";
+import * as StorageAPI from "@/api/storage";
 
 const schema = z.object({
-  user_id: z.string("User ID is required"),
   community_id: z.number("Community ID is required"),
   title: z.string("Title is required").trim().min(1, "Title is required"),
   description: z.string().trim().optional(),
@@ -23,38 +24,52 @@ export type Form = z.infer<typeof schema>;
 
 const useCreatePost = () => {
   const user = useAuthStore((state) => state.user);
+
   const community = useCommunityStore((state) => state.community);
   const setCommunity = useCommunityStore((state) => state.setCommunity);
+
+  const { media, setMedia, pickMedia } = useMediaPicker();
+
   const queryClient = useQueryClient();
 
   const form = useForm({
     resolver: zodResolver(schema),
     mode: "all",
-    defaultValues: {
-      user_id: "",
-      community_id: 0,
-      title: "",
-      description: "",
-      image: "",
-    },
   });
 
   const query = useMutation({
-    mutationFn: (data: Form) => {
+    mutationFn: async (data: Form) => {
+      let imageUrl = "";
+
+      if (media) {
+        const fileResponse = await fetch(media.uri);
+        const fileArrayBuffer = await fileResponse.arrayBuffer();
+
+        const bucket = "uploads";
+        const folder = "posts";
+        const fileName = media.uri.split("/").pop();
+
+        const data = await StorageAPI.uploadMedia({
+          bucket,
+          path: `${folder}/${fileName}`,
+          file: fileArrayBuffer,
+          contentType: media.mimeType!,
+        });
+
+        imageUrl = StorageAPI.getPublicUrl(bucket, data.fullPath);
+      }
+
       return PostAPI.createPost({
-        user_id: data.user_id,
+        user_id: user?.id || "",
         community_id: data.community_id,
         title: data.title,
         description: data.description || null,
-        image: data.image || null,
+        image: imageUrl || null,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
-
-      setCommunity(null);
-      form.reset();
-
+      resetForm();
       router.back();
     },
     onError: (error) => {
@@ -66,23 +81,25 @@ const useCreatePost = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      form.setValue("user_id", user.id, { shouldValidate: true });
-    }
-  }, [user]);
-
-  useEffect(() => {
     if (community) {
       form.setValue("community_id", community.id, { shouldValidate: true });
     }
   }, [community]);
+
+  const resetForm = () => {
+    setCommunity(null);
+    form.reset();
+  };
 
   return {
     Controller,
     form,
     query,
     community,
-    setCommunity,
+    media,
+    setMedia,
+    pickMedia,
+    resetForm,
   };
 };
 

@@ -19,10 +19,6 @@ export type Form = z.infer<typeof schema>;
 const useSignIn = () => {
   const form = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
   });
 
   const query = useMutation({
