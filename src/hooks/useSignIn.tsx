@@ -7,8 +7,11 @@ import Snackbar from "react-native-snackbar";
 import * as AuthAPI from "@/api/auth";
 
 const schema = z.object({
-  email: z.email("Invalid email").trim(),
-  password: z.string("Password is required").trim(),
+  email: z.email("Invalid email").trim().min(1, "Invalid email"),
+  password: z
+    .string("Password is required")
+    .trim()
+    .min(1, "Password is required"),
 });
 
 export type Form = z.infer<typeof schema>;
@@ -16,6 +19,10 @@ export type Form = z.infer<typeof schema>;
 const useSignIn = () => {
   const form = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
   });
 
   const query = useMutation({

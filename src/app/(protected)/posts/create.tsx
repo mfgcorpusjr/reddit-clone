@@ -16,16 +16,30 @@ import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/TextInput";
 import CloseButton from "@/components/common/CloseButton";
 
-import useCommunityStore from "@/store/useCommunityStore";
+import useCreatePost, { Form } from "@/hooks/useCreatePost";
 
 export default function CreateScreen() {
-  const community = useCommunityStore((state) => state.community);
-  const setCommunity = useCommunityStore((state) => state.setCommunity);
+  const {
+    Controller,
+    form: {
+      control,
+      handleSubmit,
+      formState: { isValid },
+      reset,
+    },
+    query: { mutate, isPending },
+    community,
+    setCommunity,
+  } = useCreatePost();
 
   const headerHeight = useHeaderHeight();
 
+  const handleCreatePost = (data: Form) => mutate(data);
+
   const handleClose = () => {
     setCommunity(null);
+    reset();
+
     router.back();
   };
 
@@ -39,6 +53,9 @@ export default function CreateScreen() {
               text="Post"
               containerClassName="bg-blue-500 rounded-full px-3"
               size="sm"
+              loading={isPending}
+              disabled={!isValid}
+              onPress={handleSubmit(handleCreatePost)}
             />
           ),
         }}
@@ -79,19 +96,37 @@ export default function CreateScreen() {
               </Pressable>
             </Link>
 
-            <TextInput
-              className="border-none font-bold"
-              style={{ fontSize: 24 }}
-              placeholder="Title"
-              scrollEnabled={false}
-              multiline
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  className="w-full border-none font-bold"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  style={{ fontSize: 24 }}
+                  placeholder="Title"
+                  scrollEnabled={false}
+                  multiline
+                />
+              )}
+              name="title"
             />
 
-            <TextInput
-              className="border-none"
-              placeholder="body text (optional)"
-              scrollEnabled={false}
-              multiline
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <TextInput
+                  className="w-full border-none"
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                  placeholder="body text (optional)"
+                  scrollEnabled={false}
+                  multiline
+                />
+              )}
+              name="description"
             />
           </ScrollView>
 
