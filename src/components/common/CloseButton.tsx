@@ -1,13 +1,14 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router } from "expo-router";
 
-export default function CloseButton() {
+type CloseButtonProps = {
+  onPress?: () => void;
+};
+
+export default function CloseButton({
+  onPress = () => router.back(),
+}: CloseButtonProps) {
   return (
-    <Ionicons
-      name="close-outline"
-      size={32}
-      color="black"
-      onPress={() => router.back()}
-    />
+    <Ionicons name="close-outline" size={32} color="black" onPress={onPress} />
   );
 }

@@ -19,7 +19,6 @@ export default function ProtectedLayout() {
         options={{
           title: "",
           headerTransparent: true,
-          headerLeft: () => <CloseButton />,
         }}
       />
       <Stack.Screen

@@ -4,23 +4,36 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Stack, Link } from "expo-router";
+import { Stack, Link, router } from "expo-router";
 import { useHeaderHeight } from "@react-navigation/elements";
 
 import Text from "@/components/ui/Text";
 import Button from "@/components/ui/Button";
 import TextInput from "@/components/ui/TextInput";
+import CloseButton from "@/components/common/CloseButton";
+
+import useCommunityStore from "@/store/useCommunityStore";
 
 export default function CreateScreen() {
+  const community = useCommunityStore((state) => state.community);
+  const setCommunity = useCommunityStore((state) => state.setCommunity);
+
   const headerHeight = useHeaderHeight();
+
+  const handleClose = () => {
+    setCommunity(null);
+    router.back();
+  };
 
   return (
     <>
       <Stack.Screen
         options={{
+          headerLeft: () => <CloseButton onPress={handleClose} />,
           headerRight: () => (
             <Button
               text="Post"
@@ -47,10 +60,22 @@ export default function CreateScreen() {
           >
             <Link href="/communities" asChild>
               <Pressable className="flex-row items-center self-start gap-2 bg-gray-200 px-3 py-1 rounded-full">
-                <View className="justify-center items-center bg-black w-7 aspect-square rounded-full">
-                  <Text className="font-inter-bold text-white">r/</Text>
-                </View>
-                <Text>Select a community</Text>
+                {community ? (
+                  <>
+                    <Image
+                      className="w-7 aspect-square rounded-full"
+                      source={{ uri: community.avatar }}
+                    />
+                    <Text>{community.slug}</Text>
+                  </>
+                ) : (
+                  <>
+                    <View className="justify-center items-center bg-black w-7 aspect-square rounded-full">
+                      <Text className="font-inter-bold text-white">r/</Text>
+                    </View>
+                    <Text>Select a community</Text>
+                  </>
+                )}
               </Pressable>
             </Link>
 

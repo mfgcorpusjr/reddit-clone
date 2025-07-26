@@ -2,12 +2,15 @@ import { FlatList, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { router } from "expo-router";
 
 import TextInput from "@/components/ui/TextInput";
 import CommunityListItem from "@/components/CommunityListItem";
 import ListEmpty from "@/components/common/ListEmpty";
 
 import useCommunityList from "@/hooks/useCommunityList";
+import useCommunityStore from "@/store/useCommunityStore";
+import { Tables } from "@/types/database.types";
 
 export default function CommunitiesScreen() {
   const {
@@ -16,7 +19,14 @@ export default function CommunitiesScreen() {
     query: { data, isLoading },
   } = useCommunityList();
 
+  const setCommunity = useCommunityStore((state) => state.setCommunity);
+
   const headerHeight = useHeaderHeight();
+
+  const handleSelectCommunity = (community: Tables<"communities">) => {
+    setCommunity(community);
+    router.back();
+  };
 
   return (
     <SafeAreaView
@@ -47,7 +57,12 @@ export default function CommunitiesScreen() {
       >
         <FlatList
           data={data}
-          renderItem={({ item }) => <CommunityListItem community={item} />}
+          renderItem={({ item }) => (
+            <CommunityListItem
+              community={item}
+              onPress={() => handleSelectCommunity(item)}
+            />
+          )}
           ListEmptyComponent={
             <ListEmpty text="No communities found" isLoading={isLoading} />
           }

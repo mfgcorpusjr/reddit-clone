@@ -5,13 +5,15 @@ import Text from "@/components/ui/Text";
 
 type CommunityListItemProps = {
   community: Tables<"communities">;
+  onPress: () => void;
 };
 
 export default function CommunityListItem({
   community,
+  onPress,
 }: CommunityListItemProps) {
   return (
-    <Pressable className="flex-row items-center gap-4 p-2">
+    <Pressable className="flex-row items-center gap-4 p-2" onPress={onPress}>
       <Image
         className="w-10 aspect-square rounded-full"
         source={{ uri: community.avatar }}
